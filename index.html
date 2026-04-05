@@ -33,11 +33,10 @@
         body { 
             font-family: 'Pretendard', sans-serif;
             margin: 0;
-            overflow: hidden; /* 기본 스크롤 숨김 */
+            overflow: hidden; 
             background-color: #0a0a0a;
         }
         
-        /* 풀페이지 스크롤 스냅 핵심 CSS */
         .scroll-container {
             height: 100dvh;
             overflow-y: scroll;
@@ -45,9 +44,8 @@
             scroll-behavior: smooth;
         }
         
-        /* 각 섹션 최적화: 내용이 넘쳐도 짤리지 않도록 min-height 적용 및 상하단 패딩 고정 */
         .snap-section {
-            min-height: 100dvh; /* 화면 크기보다 내용이 길면 늘어나도록 변경 (짤림 방지) */
+            min-height: 100dvh; 
             width: 100%;
             scroll-snap-align: start;
             scroll-snap-stop: always;
@@ -55,7 +53,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* 네비게이션바 및 하단 UI에 절대 가려지지 않도록 안전 공간 확보 */
             padding-top: calc(5rem + env(safe-area-inset-top)); 
             padding-bottom: calc(3rem + env(safe-area-inset-bottom));
             padding-left: env(safe-area-inset-left);
@@ -64,11 +61,9 @@
 
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
         
-        /* 배경 이미지 줌 애니메이션 */
         .hero-zoom { animation: heroZoom 20s infinite alternate ease-in-out; }
         @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
         
-        /* 스크롤 연동 등장 애니메이션 */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
@@ -107,8 +102,8 @@
             <div class="relative z-10 px-8 md:px-16 max-w-7xl w-full mx-auto md:mt-12">
                 <div class="space-y-4 md:space-y-6">
                     <span class="reveal font-bold tracking-[0.3em] uppercase text-xs md:text-sm text-gray-400 block">Design Studio</span>
-                    <h1 class="reveal delay-100 text-4xl md:text-8xl font-black tracking-tighter leading-[1.1] break-keep">
-                        디자인의 시작은 <br>기획입니다
+                    <h1 id="displayTitle" class="reveal delay-100 text-4xl md:text-8xl font-black tracking-tighter leading-[1.1] break-keep">
+                        불러오는 중...
                     </h1>
                     <p class="reveal delay-200 text-gray-400 text-base md:text-xl max-w-lg font-light leading-relaxed mt-6 md:mt-8 break-keep">
                         불필요한 거품을 걷어내고 가장 정제된 가격을 제공합니다. <br>당신의 비즈니스를 위한 압도적인 디지털 경험을 만나보세요.
@@ -124,47 +119,11 @@
         </section>
 
         <section class="snap-section bg-imyeon-black flex items-center">
-            <div class="max-w-7xl mx-auto px-8 md:px-16 w-full flex flex-col md:flex-row gap-8 md:gap-32 items-center">
-                <div class="w-full md:w-1/2">
-                    <h2 class="reveal text-3xl md:text-6xl font-black tracking-tighter mb-4 md:mb-8 leading-tight">
-                        저렴하지만<br>퀄리티가 다른 결과물
-                    </h2>
-                    <p class="reveal delay-100 text-gray-400 leading-relaxed text-sm md:text-lg break-keep">
-                        사이트 제작 비용이 저렴하면 퀄리티가 안좋을까요?<br>우리는 시각적 노이즈를 제거하고 브랜드의 진짜 목소리만을 남깁니다.
-                    </p>
-                </div>
-                <div class="w-full md:w-1/2 grid grid-cols-1 gap-5 md:gap-12">
-                    <div class="reveal delay-200 border-t border-white/20 pt-4 md:pt-6">
-                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">01. Intuitive UX</p>
-                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">사용자의 동선을 예측하고 피로도를 낮추는 직관적인 설계를 지향합니다.</p>
-                    </div>
-                    <div class="reveal delay-300 border-t border-white/20 pt-4 md:pt-6">
-                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">02. HIDDEN DETAILS</p>
-                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">보이지 않는 디테일의 차이가 명품을 만듭니다. <br class="hidden md:block">작은 인터랙션 하나까지 세밀하게 설계하여 완성도를 높입니다.</p>
-                    </div>
-                    <div class="reveal delay-300 border-t border-white/20 pt-4 md:pt-6">
-                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">03. LASTING IMPRESSION</p>
-                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">한 번의 방문으로도 브랜드의 이미지가 깊게 각인될 수 있는 <br class="hidden md:block">독창적인 무드를 제작합니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+            </section>
         <section class="snap-section bg-black overflow-hidden relative">
-            <div class="absolute inset-0 z-0">
-                <img alt="Abstract digital art" class="w-full h-full object-cover opacity-40 grayscale" src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000&auto=format&fit=crop"/>
-            </div>
-            <div class="relative z-10 max-w-7xl mx-auto px-8 md:px-16 w-full text-center">
-                <h3 class="reveal text-4xl md:text-7xl font-bold tracking-tight mb-6 md:mb-8 leading-tight">
-                    디테일의 차이가<br/>결과의 차이를 만듭니다.
-                </h3>
-                <a href="https://www.daangn.com/kr/local-profile/yuurs2fcq5hz/" target="_blank" rel="noopener noreferrer" class="reveal delay-100 inline-block border-b-2 border-white pb-2 hover:text-gray-400 hover:border-gray-400 transition-colors uppercase tracking-widest font-bold text-sm mt-4 md:mt-8">
-                 프로젝트 문의하기
-                </a>
-            </div>
-        </section>
+            </section>
 
-        <section class="snap-section bg-imyeon-dark !min-h-[auto]">
+        <footer class="snap-section bg-imyeon-dark !min-h-[auto]">
             <div class="max-w-7xl mx-auto px-8 md:px-16 w-full py-16 md:py-24 flex flex-col justify-between h-full">
                 <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 mb-16 md:mb-24">
                     <div class="space-y-4 md:space-y-6">
@@ -193,7 +152,7 @@
                     <span class="text-center md:text-left">© 2026 Design Studio IMYEON. All rights reserved.</span>
                 </div>
             </div>
-        </section>
+        </footer>
 
     </main>
 
@@ -204,13 +163,42 @@
             100% { transform: translateY(100%); }
         }
     </style>
-    <script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // 본인의 Firebase Config 정보
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
+            authDomain: "imyeontest.firebaseapp.com",
+            databaseURL: "https://imyeontest-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "imyeontest",
+            storageBucket: "imyeontest.firebasestorage.app",
+            messagingSenderId: "55529187023",
+            appId: "1:55529187023:web:de07ae1f7ce459e36079ba",
+            measurementId: "G-K4WGRY1XQ5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 데이터베이스의 'siteData/mainTitle' 경로를 실시간 감시
+        const titleRef = ref(db, 'siteData/mainTitle');
+        onValue(titleRef, (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                // h1 태그(id="displayTitle")에 데이터를 넣음
+                document.getElementById('displayTitle').innerHTML = data.replace(/\n/g, "<br>");
+            }
+        });
+
+        // 기존 IntersectionObserver 코드 (애니메이션용)
         document.addEventListener("DOMContentLoaded", () => {
             const observerOptions = {
                 root: document.querySelector('.scroll-container'),
-                threshold: 0.2 // 모바일 환경을 고려해 인식률을 조금 낮춤
+                threshold: 0.2
             };
-
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
@@ -218,7 +206,6 @@
                     }
                 });
             }, observerOptions);
-
             document.querySelectorAll('.reveal').forEach((el) => {
                 observer.observe(el);
             });

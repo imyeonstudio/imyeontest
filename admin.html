@@ -1,61 +1,115 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html class="dark" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 페이지 - 이면</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <title>IMYEON STUDIO | 관리자 센터</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: { sans: ["Pretendard", "sans-serif"] },
+                    colors: {
+                        "imyeon-black": "#0a0a0a",
+                        "imyeon-dark": "#141414",
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-        .container { max-width: 500px; margin: 0 auto; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
-        input { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
-        button:hover { background: #333; }
+        body { 
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            background-color: #0a0a0a; /* 메인과 동일한 어두운 배경 */
+            color: white;
+        }
+        /* 입력창 포커스 시 테두리 색상 커스텀 */
+        input:focus {
+            border-color: #fff !important;
+            ring-color: #fff !important;
+        }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-white selection:text-black">
 
-<div class="container">
-    <h2>메인 문구 수정 - Alpha Testing</h2>
-    <p>여기에 입력한 내용이 실시간으로 홈페이지에 반영됩니다.</p>
-    <input type="text" id="titleInput" placeholder="바꿀 제목을 입력하세요">
-    <button onclick="saveToFirebase()">홈페이지 업데이트</button>
-</div>
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-6 border-b border-white/10 bg-imyeon-black/80 backdrop-blur-sm">
+        <div class="text-xl font-black tracking-widest uppercase text-white">IMYEON <span class="text-xs font-light text-gray-500">ADMIN</span></div>
+        <a href="index.html" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-bold">메인 바로가기 →</a>
+    </nav>
 
-<script type="module">
-    // Firebase 라이브러리 불러오기
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    <main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-12">
+        <div class="bg-imyeon-dark w-full max-w-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
+            
+            <div class="mb-10 pb-6 border-b border-white/10">
+                <span class="font-bold tracking-[0.3em] uppercase text-xs text-gray-500 block mb-2">Alpha Testing Zone</span>
+                <h1 class="text-3xl md:text-4xl font-black tracking-tighter leading-tight break-keep">
+                    메인 <br>문구 수정
+                </h1>
+                <p class="text-gray-400 text-sm font-light leading-relaxed mt-4 break-keep">
+                    여기에 입력한 내용이 메인 페이지의 대형 타이틀에 실시간으로 반영됩니다. 줄바꿈은 그냥 엔터를 누르세요!
+                </p>
+            </div>
 
-    // 본인이 복사한 그 Config 값입니다.
-    const firebaseConfig = {
-        apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
-        authDomain: "imyeontest.firebaseapp.com",
-        databaseURL: "https://imyeontest-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "imyeontest",
-        storageBucket: "imyeontest.firebasestorage.app",
-        messagingSenderId: "55529187023",
-        appId: "1:55529187023:web:de07ae1f7ce459e36079ba",
-        measurementId: "G-K4WGRY1XQ5"
-    };
+            <div class="space-y-6">
+                <div>
+                    <label for="titleInput" class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">새로운 제목 입력</label>
+                    <textarea id="titleInput" rows="4" 
+                        class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 focus:border-white focus:ring-1 focus:ring-white transition resize-none break-keep"
+                        placeholder="예: 디자인의 시작은\n기획입니다"></textarea>
+                </div>
 
-    // Firebase 초기화
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+                <button onclick="saveToFirebase()" 
+                    class="w-full inline-block bg-white text-black text-center py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest font-bold text-sm shadow-lg">
+                    홈페이지 업데이트 적용
+                </button>
+            </div>
 
-    // 버튼을 눌렀을 때 실행될 함수
-    window.saveToFirebase = function() {
-        const newText = document.getElementById('titleInput').value;
-        if(!newText) return alert("내용을 입력해주세요!");
+        </div>
+    </main>
 
-        // 데이터베이스 'siteData/mainTitle' 경로에 저장
-        set(ref(db, 'siteData/'), {
-            mainTitle: newText
-        }).then(() => {
-            alert("업데이트 완료! 메인 페이지를 확인해보세요.");
-        }).catch((error) => {
-            alert("오류 발생: " + error.message);
-        });
-    }
-</script>
+    <footer class="text-center p-6 text-xs text-gray-600 border-t border-white/10">
+        © 2026 Design Studio IMYEON. Admin Panel v1.0
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
+            authDomain: "imyeontest.firebaseapp.com",
+            databaseURL: "https://imyeontest-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "imyeontest",
+            storageBucket: "imyeontest.firebasestorage.app",
+            messagingSenderId: "55529187023",
+            appId: "1:55529187023:web:de07ae1f7ce459e36079ba",
+            measurementId: "G-K4WGRY1XQ5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.saveToFirebase = function() {
+            const newText = document.getElementById('titleInput').value;
+            if(!newText) return alert("내용을 입력해주세요!");
+
+            set(ref(db, 'siteData/'), {
+                mainTitle: newText
+            }).then(() => {
+                // 성공 알림창을 조금 더 고급스럽게 꾸밀 수도 있지만, 일단 기본 alert 유지
+                alert("🎉 업데이트 완료! 메인 페이지를 확인해보세요.");
+            }).catch((error) => {
+                alert("❌ 오류 발생: " + error.message);
+            });
+        }
+    </script>
 
 </body>
 </html>

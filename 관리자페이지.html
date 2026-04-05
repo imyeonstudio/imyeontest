@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지 - 이면</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .container { max-width: 500px; margin: 0 auto; border: 1px solid #ccc; padding: 20px; border-radius: 10px; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>메인 문구 수정</h2>
+    <p>여기에 입력한 내용이 실시간으로 홈페이지에 반영됩니다.</p>
+    <input type="text" id="titleInput" placeholder="바꿀 제목을 입력하세요">
+    <button onclick="saveToFirebase()">홈페이지 업데이트</button>
+</div>
+
+<script type="module">
+    // Firebase 라이브러리 불러오기
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // 본인이 복사한 그 Config 값입니다.
+    const firebaseConfig = {
+        apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
+        authDomain: "imyeontest.firebaseapp.com",
+        databaseURL: "https://imyeontest-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "imyeontest",
+        storageBucket: "imyeontest.firebasestorage.app",
+        messagingSenderId: "55529187023",
+        appId: "1:55529187023:web:de07ae1f7ce459e36079ba",
+        measurementId: "G-K4WGRY1XQ5"
+    };
+
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // 버튼을 눌렀을 때 실행될 함수
+    window.saveToFirebase = function() {
+        const newText = document.getElementById('titleInput').value;
+        if(!newText) return alert("내용을 입력해주세요!");
+
+        // 데이터베이스 'siteData/mainTitle' 경로에 저장
+        set(ref(db, 'siteData/'), {
+            mainTitle: newText
+        }).then(() => {
+            alert("업데이트 완료! 메인 페이지를 확인해보세요.");
+        }).catch((error) => {
+            alert("오류 발생: " + error.message);
+        });
+    }
+</script>
+
+</body>
+</html>

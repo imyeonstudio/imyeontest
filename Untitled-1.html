@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="dark" lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <meta name="description" content="웹사이트 제작, 도메인 등록, 서버 호스팅까지 한 번에. 불필요한 거품을 걷어낸 디자인 스튜디오 이면(IMYEON)의 원스톱 서비스를 만나보세요.">
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>IMYEON STUDIO | 본질을 향한 기술의 침묵</title>
+    
+    <link rel="canonical" href="https://imyeonstudio.kro.kr" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Pretendard", "Inter", "sans-serif"],
+                    },
+                    colors: {
+                        "imyeon-black": "#0a0a0a",
+                        "imyeon-dark": "#141414",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            overflow: hidden; /* 기본 스크롤 숨김 */
+            background-color: #0a0a0a;
+        }
+        
+        /* 풀페이지 스크롤 스냅 핵심 CSS */
+        .scroll-container {
+            height: 100dvh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        
+        /* 각 섹션 최적화: 내용이 넘쳐도 짤리지 않도록 min-height 적용 및 상하단 패딩 고정 */
+        .snap-section {
+            min-height: 100dvh; /* 화면 크기보다 내용이 길면 늘어나도록 변경 (짤림 방지) */
+            width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* 네비게이션바 및 하단 UI에 절대 가려지지 않도록 안전 공간 확보 */
+            padding-top: calc(5rem + env(safe-area-inset-top)); 
+            padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        
+        /* 배경 이미지 줌 애니메이션 */
+        .hero-zoom { animation: heroZoom 20s infinite alternate ease-in-out; }
+        @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+        
+        /* 스크롤 연동 등장 애니메이션 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+    </style>
+</head>
+<body class="text-white antialiased selection:bg-white selection:text-black">
+
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 md:px-16 pb-8" style="padding-top: max(2rem, env(safe-area-inset-top));">
+        <div class="text-2xl font-black tracking-widest uppercase text-white">IMYEON</div>
+        <div class="hidden md:flex gap-12 items-center text-sm font-semibold tracking-wider">
+            <a class="text-white hover:opacity-50 transition-opacity" href="#">HOME</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <button class="text-white hover:opacity-50 transition-opacity">
+                <span class="material-symbols-outlined text-3xl">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="scroll-container">
+        
+        <section class="snap-section bg-imyeon-black overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img alt="Dark minimalist architecture" class="hero-zoom w-full h-full object-cover opacity-50" src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop"/>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-imyeon-black"></div>
+            </div>
+            <div class="relative z-10 px-8 md:px-16 max-w-7xl w-full mx-auto md:mt-12">
+                <div class="space-y-4 md:space-y-6">
+                    <span class="reveal font-bold tracking-[0.3em] uppercase text-xs md:text-sm text-gray-400 block">Design Studio</span>
+                    <h1 class="reveal delay-100 text-4xl md:text-8xl font-black tracking-tighter leading-[1.1] break-keep">
+                        디자인의 시작은 <br>기획입니다
+                    </h1>
+                    <p class="reveal delay-200 text-gray-400 text-base md:text-xl max-w-lg font-light leading-relaxed mt-6 md:mt-8 break-keep">
+                        불필요한 거품을 걷어내고 가장 정제된 가격을 제공합니다. <br>당신의 비즈니스를 위한 압도적인 디지털 경험을 만나보세요.
+                    </p>
+                </div>
+            </div>
+            <div class="absolute bottom-6 md:bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 reveal delay-300 opacity-50">
+                <span class="text-[10px] tracking-widest uppercase">Scroll</span>
+                <div class="w-[1px] h-8 md:h-12 bg-white/30 overflow-hidden">
+                    <div class="w-full h-full bg-white animate-[slideDown_1.5s_ease-in-out_infinite]"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="snap-section bg-imyeon-black flex items-center">
+            <div class="max-w-7xl mx-auto px-8 md:px-16 w-full flex flex-col md:flex-row gap-8 md:gap-32 items-center">
+                <div class="w-full md:w-1/2">
+                    <h2 class="reveal text-3xl md:text-6xl font-black tracking-tighter mb-4 md:mb-8 leading-tight">
+                        저렴하지만<br>퀄리티가 다른 결과물
+                    </h2>
+                    <p class="reveal delay-100 text-gray-400 leading-relaxed text-sm md:text-lg break-keep">
+                        사이트 제작 비용이 저렴하면 퀄리티가 안좋을까요?<br>우리는 시각적 노이즈를 제거하고 브랜드의 진짜 목소리만을 남깁니다.
+                    </p>
+                </div>
+                <div class="w-full md:w-1/2 grid grid-cols-1 gap-5 md:gap-12">
+                    <div class="reveal delay-200 border-t border-white/20 pt-4 md:pt-6">
+                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">01. Intuitive UX</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">사용자의 동선을 예측하고 피로도를 낮추는 직관적인 설계를 지향합니다.</p>
+                    </div>
+                    <div class="reveal delay-300 border-t border-white/20 pt-4 md:pt-6">
+                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">02. HIDDEN DETAILS</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">보이지 않는 디테일의 차이가 명품을 만듭니다. <br class="hidden md:block">작은 인터랙션 하나까지 세밀하게 설계하여 완성도를 높입니다.</p>
+                    </div>
+                    <div class="reveal delay-300 border-t border-white/20 pt-4 md:pt-6">
+                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">03. LASTING IMPRESSION</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">한 번의 방문으로도 브랜드의 이미지가 깊게 각인될 수 있는 <br class="hidden md:block">독창적인 무드를 제작합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="snap-section bg-black overflow-hidden relative">
+            <div class="absolute inset-0 z-0">
+                <img alt="Abstract digital art" class="w-full h-full object-cover opacity-40 grayscale" src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2000&auto=format&fit=crop"/>
+            </div>
+            <div class="relative z-10 max-w-7xl mx-auto px-8 md:px-16 w-full text-center">
+                <h3 class="reveal text-4xl md:text-7xl font-bold tracking-tight mb-6 md:mb-8 leading-tight">
+                    디테일의 차이가<br/>결과의 차이를 만듭니다.
+                </h3>
+                <a href="https://www.daangn.com/kr/local-profile/yuurs2fcq5hz/" target="_blank" rel="noopener noreferrer" class="reveal delay-100 inline-block border-b-2 border-white pb-2 hover:text-gray-400 hover:border-gray-400 transition-colors uppercase tracking-widest font-bold text-sm mt-4 md:mt-8">
+                 프로젝트 문의하기
+                </a>
+            </div>
+        </section>
+
+        <section class="snap-section bg-imyeon-dark !min-h-[auto]">
+            <div class="max-w-7xl mx-auto px-8 md:px-16 w-full py-16 md:py-24 flex flex-col justify-between h-full">
+                <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 mb-16 md:mb-24">
+                    <div class="space-y-4 md:space-y-6">
+                        <div class="text-2xl font-black tracking-widest">IMYEON</div>
+                        <p class="text-gray-500 text-sm max-w-xs break-keep">
+                            디자인 스튜디오 이면은 보이지 않는 가치를 시각화하여 비즈니스의 새로운 차원을 엽니다.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-widest mb-4 md:mb-6 text-gray-400">Services</h4>
+                        <ul class="space-y-3 text-gray-500 text-sm font-light">
+                            <li class="hover:text-white cursor-pointer transition-colors">Web Development</li>
+                            <li class="hover:text-white cursor-pointer transition-colors">UX/UI Design</li>
+                            <li class="hover:text-white cursor-pointer transition-colors">Brand Identity</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-bold uppercase tracking-widest mb-4 md:mb-6 text-gray-400">INFO</h5>
+                        <ul class="space-y-3 text-gray-500 text-sm font-light">
+                            <li>사업자번호 873-45-01091</li>
+                            <li>대표자 박현</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="reveal delay-100 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 gap-4 md:gap-0">
+                    <span class="text-center md:text-left">© 2026 Design Studio IMYEON. All rights reserved.</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <style>
+        @keyframes slideDown {
+            0% { transform: translateY(-100%); }
+            50% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: document.querySelector('.scroll-container'),
+                threshold: 0.2 // 모바일 환경을 고려해 인식률을 조금 낮춤
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

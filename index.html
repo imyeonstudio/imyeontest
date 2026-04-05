@@ -64,6 +64,7 @@
         .hero-zoom { animation: heroZoom 20s infinite alternate ease-in-out; }
         @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
         
+        /* 스크롤 연동 등장 애니메이션 */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
@@ -102,9 +103,11 @@
             <div class="relative z-10 px-8 md:px-16 max-w-7xl w-full mx-auto md:mt-12">
                 <div class="space-y-4 md:space-y-6">
                     <span class="reveal font-bold tracking-[0.3em] uppercase text-xs md:text-sm text-gray-400 block">Design Studio</span>
-                    <h1 id="displayTitle" class="reveal delay-100 text-4xl md:text-8xl font-black tracking-tighter leading-[1.1] break-keep">
-                        
+                    
+                    <h1 id="displayTitle" class="text-4xl md:text-8xl font-black tracking-tighter leading-[1.1] break-keep opacity-0">
+                        불러오는 중...
                     </h1>
+                    
                     <p class="reveal delay-200 text-gray-400 text-base md:text-xl max-w-lg font-light leading-relaxed mt-6 md:mt-8 break-keep">
                         불필요한 거품을 걷어내고 가장 정제된 가격을 제공합니다. <br>당신의 비즈니스를 위한 압도적인 디지털 경험을 만나보세요.
                     </p>
@@ -119,9 +122,27 @@
         </section>
 
         <section class="snap-section bg-imyeon-black flex items-center">
-            </section>
-        <section class="snap-section bg-black overflow-hidden relative">
-            </section>
+            <div class="max-w-7xl mx-auto px-8 md:px-16 w-full flex flex-col md:flex-row gap-8 md:gap-32 items-center">
+                <div class="w-full md:w-1/2">
+                    <h2 class="reveal text-3xl md:text-6xl font-black tracking-tighter mb-4 md:mb-8 leading-tight">
+                        저렴하지만<br>퀄리티가 다른 결과물
+                    </h2>
+                    <p class="reveal delay-100 text-gray-400 leading-relaxed text-sm md:text-lg break-keep">
+                        사이트 제작 비용이 저렴하면 퀄리티가 안좋을까요?<br>우리는 시각적 노이즈를 제거하고 브랜드의 진짜 목소리만을 남깁니다.
+                    </p>
+                </div>
+                <div class="w-full md:w-1/2 grid grid-cols-1 gap-5 md:gap-12">
+                    <div class="reveal delay-200 border-t border-white/20 pt-4 md:pt-6">
+                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">01. Intuitive UX</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">사용자의 동선을 예측하고 피로도를 낮추는 직관적인 설계를 지향합니다.</p>
+                    </div>
+                    <div class="reveal delay-300 border-t border-white/20 pt-4 md:pt-6">
+                        <p class="text-sm md:text-base font-black tracking-widest uppercase mb-2 md:mb-4">02. HIDDEN DETAILS</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm md:text-base">보이지 않는 디테일의 차이가 명품을 만듭니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <footer class="snap-section bg-imyeon-dark !min-h-[auto]">
             <div class="max-w-7xl mx-auto px-8 md:px-16 w-full py-16 md:py-24 flex flex-col justify-between h-full">
@@ -133,14 +154,6 @@
                         </p>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold uppercase tracking-widest mb-4 md:mb-6 text-gray-400">Services</h4>
-                        <ul class="space-y-3 text-gray-500 text-sm font-light">
-                            <li class="hover:text-white cursor-pointer transition-colors">Web Development</li>
-                            <li class="hover:text-white cursor-pointer transition-colors">UX/UI Design</li>
-                            <li class="hover:text-white cursor-pointer transition-colors">Brand Identity</li>
-                        </ul>
-                    </div>
-                    <div>
                         <h5 class="text-xs font-bold uppercase tracking-widest mb-4 md:mb-6 text-gray-400">INFO</h5>
                         <ul class="space-y-3 text-gray-500 text-sm font-light">
                             <li>사업자번호 873-45-01091</li>
@@ -148,8 +161,8 @@
                         </ul>
                     </div>
                 </div>
-                <div class="reveal delay-100 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 gap-4 md:gap-0">
-                    <span class="text-center md:text-left">© 2026 Design Studio IMYEON. All rights reserved.</span>
+                <div class="reveal delay-100 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
+                    <span>© 2026 Design Studio IMYEON. All rights reserved.</span>
                 </div>
             </div>
         </footer>
@@ -168,7 +181,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // 본인의 Firebase Config 정보
         const firebaseConfig = {
             apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
             authDomain: "imyeontest.firebaseapp.com",
@@ -183,17 +195,25 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 데이터베이스의 'siteData/mainTitle' 경로를 실시간 감시
+        // [수정] Firebase 연동 및 애니메이션 타이밍 최적화
         const titleRef = ref(db, 'siteData/mainTitle');
         onValue(titleRef, (snapshot) => {
             const data = snapshot.val();
             if(data) {
-                // h1 태그(id="displayTitle")에 데이터를 넣음
-                document.getElementById('displayTitle').innerHTML = data.replace(/\n/g, "<br>");
+                const titleElement = document.getElementById('displayTitle');
+                
+                // 1. 데이터를 먼저 넣습니다.
+                titleElement.innerHTML = data.replace(/\n/g, "<br>");
+                
+                // 2. 데이터 로드 후 0.1초 뒤에 애니메이션 클래스를 추가하여 부드럽게 나타나게 합니다.
+                setTimeout(() => {
+                    titleElement.classList.add('reveal', 'active');
+                    titleElement.classList.remove('opacity-0');
+                }, 100);
             }
         });
 
-        // 기존 IntersectionObserver 코드 (애니메이션용)
+        // 기존 IntersectionObserver (스크롤 감지용)
         document.addEventListener("DOMContentLoaded", () => {
             const observerOptions = {
                 root: document.querySelector('.scroll-container'),

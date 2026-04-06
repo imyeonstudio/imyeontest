@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>IMYEON STUDIO | 관리자 센터</title>
     
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     
     <script>
@@ -35,7 +35,6 @@
             outline: none !important;
             ring: 1px solid #fff !important;
         }
-        /* 인증 레이어 스타일 */
         #auth-overlay {
             position: fixed; inset: 0; background: #0a0a0a; z-index: 100;
             display: flex; align-items: center; justify-content: center;
@@ -49,7 +48,7 @@
         <div class="bg-imyeon-dark p-8 md:p-12 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl">
             <div class="text-center mb-10">
                 <div class="text-xl font-black tracking-widest uppercase text-white mb-2">IMYEON <span class="text-xs font-light text-gray-500">ADMIN</span></div>
-                <p class="text-gray-400 text-xs tracking-widest uppercase">Access Restricted</p>
+                <p class="text-gray-400 text-xs tracking-widest uppercase text-[10px]">Access Restricted</p>
             </div>
             
             <div class="space-y-4">
@@ -90,12 +89,9 @@
 
         <main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-12">
             <div class="bg-imyeon-dark w-full max-w-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
-                
                 <div class="mb-10 pb-6 border-b border-white/10">
                     <span class="font-bold tracking-[0.3em] uppercase text-[10px] text-gray-500 block mb-2">Internal Management</span>
-                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter leading-tight break-keep">
-                        메인 문구 수정
-                    </h1>
+                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter leading-tight break-keep">메인 문구 수정</h1>
                     <p class="text-gray-400 text-sm font-light leading-relaxed mt-4 break-keep">
                         입력한 내용이 홈페이지 메인 타이틀에 실시간으로 반영됩니다.
                     </p>
@@ -108,7 +104,6 @@
                             class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 focus:border-white focus:ring-1 focus:ring-white transition resize-none break-keep"
                             placeholder="예: 디자인의 시작은 기획입니다"></textarea>
                     </div>
-
                     <button onclick="saveToFirebase()" 
                         class="w-full inline-block bg-white text-black text-center py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest font-bold text-sm shadow-lg">
                         홈페이지 업데이트 적용
@@ -124,8 +119,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
@@ -138,30 +133,52 @@
             measurementId: "G-K4WGRY1XQ5"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
+        // 초기화 확인용 로직 추가
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getDatabase(app);
+        } catch (e) {
+            console.error("Firebase 초기화 오류:", e);
+        }
 
-        // [상태 감지] 로그인 여부 실시간 확인
+        // 전역 함수 등록
+        window.auth = auth;
+
+        // [상태 감지]
         onAuthStateChanged(auth, async (user) => {
+            const overlay = document.getElementById('auth-overlay');
+            const content = document.getElementById('admin-content');
+            const msg = document.getElementById('auth-msg');
+
             if (user) {
-                const snapshot = await get(ref(db, 'users/' + user.uid));
-                const userData = snapshot.val();
-                
-                if (userData && userData.approved === true) {
-                    document.getElementById('auth-overlay').classList.add('hidden');
-                    document.getElementById('admin-content').classList.remove('hidden');
-                } else {
-                    if (userData) alert("아직 승인되지 않은 회원입니다. 대표님께 문의하세요.");
-                    handleLogout();
+                try {
+                    const snapshot = await get(ref(db, 'users/' + user.uid));
+                    const userData = snapshot.val();
+
+                    if (userData && userData.approved === true) {
+                        overlay.classList.add('hidden');
+                        content.classList.remove('hidden');
+                        msg.innerText = "";
+                    } else {
+                        // 승인되지 않은 유저 처리
+                        if (userData) {
+                            alert("아직 승인되지 않은 회원입니다. 대표님께 승인 요청을 하세요.");
+                        }
+                        await signOut(auth);
+                    }
+                } catch (error) {
+                    console.error("DB 조회 오류:", error);
+                    await signOut(auth);
                 }
             } else {
-                document.getElementById('auth-overlay').classList.remove('hidden');
-                document.getElementById('admin-content').classList.add('hidden');
+                overlay.classList.remove('hidden');
+                content.classList.add('hidden');
             }
         });
 
-        // [함수] 회원가입 신청
+        // [회원가입]
         window.handleSignup = async function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -174,14 +191,15 @@
                     approved: false,
                     requestDate: new Date().toISOString()
                 });
-                alert("회원가입 신청 완료! 대표님의 승인 후 로그인이 가능합니다.");
-                handleLogout();
+                alert("회원가입 신청이 완료되었습니다. 대표님의 승인 후 로그인이 가능합니다.");
+                await signOut(auth);
             } catch (error) {
-                alert("신청 실패: " + error.message);
+                console.error("회원가입 오류:", error);
+                alert("신청 실패: " + error.code);
             }
         }
 
-        // [함수] 로그인 처리
+        // [로그인]
         window.handleLogin = async function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -191,16 +209,21 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
+                console.error("로그인 오류:", error);
                 msg.innerText = "이메일 또는 비밀번호가 올바르지 않습니다.";
             }
         }
 
-        // [함수] 로그아웃
-        window.handleLogout = function() {
-            signOut(auth);
+        // [로그아웃]
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("로그아웃 오류:", error);
+            }
         }
 
-        // [함수] 데이터 저장 (기존 기능)
+        // [저장]
         window.saveToFirebase = function() {
             const newText = document.getElementById('titleInput').value;
             if(!newText) return alert("내용을 입력해주세요!");
@@ -214,6 +237,5 @@
             });
         }
     </script>
-
 </body>
 </html>

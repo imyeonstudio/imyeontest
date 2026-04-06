@@ -40,6 +40,7 @@
             display: flex; align-items: center; justify-content: center;
         }
         .hidden { display: none !important; }
+        .msg-fade { transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
@@ -60,6 +61,7 @@
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Password</label>
                     <input type="password" id="password" placeholder="비밀번호를 입력하세요" 
+                        onkeyup="if(window.event.keyCode==13){handleLogin()}"
                         class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 transition">
                 </div>
                 
@@ -73,7 +75,7 @@
                         회원가입 신청
                     </button>
                 </div>
-                <p id="auth-msg" class="mt-4 text-xs text-center text-red-500 font-medium h-4"></p>
+                <p id="auth-msg" class="mt-4 text-xs text-center font-medium h-4"></p>
             </div>
         </div>
     </div>
@@ -108,6 +110,7 @@
                         class="w-full inline-block bg-white text-black text-center py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest font-bold text-sm shadow-lg">
                         홈페이지 업데이트 적용
                     </button>
+                    <p id="update-msg" class="text-xs text-center font-medium h-4 mt-2"></p>
                 </div>
             </div>
         </main>
@@ -133,7 +136,6 @@
             measurementId: "G-K4WGRY1XQ5"
         };
 
-        // 초기화 확인용 로직 추가
         let app, auth, db;
         try {
             app = initializeApp(firebaseConfig);
@@ -143,8 +145,17 @@
             console.error("Firebase 초기화 오류:", e);
         }
 
-        // 전역 함수 등록
         window.auth = auth;
+
+        // 공통 메시지 출력 함수
+        function showMessage(elementId, text, isError = true) {
+            const el = document.getElementById(elementId);
+            el.innerText = text;
+            el.className = `mt-4 text-xs text-center font-medium h-4 ${isError ? 'text-red-500' : 'text-green-500'}`;
+            
+            // 3초 후 메시지 자동 삭제
+            setTimeout(() => { el.innerText = ""; }, 3000);
+        }
 
         // [상태 감지]
         onAuthStateChanged(auth, async (user) => {
@@ -162,14 +173,12 @@
                         content.classList.remove('hidden');
                         msg.innerText = "";
                     } else {
-                        // 승인되지 않은 유저 처리
                         if (userData) {
-                            alert("아직 승인되지 않은 회원입니다. 대표님께 승인 요청을 하세요.");
+                            showMessage('auth-msg', "승인 대기 중입니다. 대표님께 요청하세요.");
                         }
                         await signOut(auth);
                     }
                 } catch (error) {
-                    console.error("DB 조회 오류:", error);
                     await signOut(auth);
                 }
             } else {
@@ -182,7 +191,7 @@
         window.handleSignup = async function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if(!email || !password) return alert("정보를 모두 입력해주세요.");
+            if(!email || !password) return showMessage('auth-msg', "정보를 모두 입력해주세요.");
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -191,11 +200,14 @@
                     approved: false,
                     requestDate: new Date().toISOString()
                 });
-                alert("회원가입 신청이 완료되었습니다. 대표님의 승인 후 로그인이 가능합니다.");
+                showMessage('auth-msg', "신청 완료! 승인 후 로그인이 가능합니다.", false);
                 await signOut(auth);
             } catch (error) {
-                console.error("회원가입 오류:", error);
-                alert("신청 실패: " + error.code);
+                if(error.code === 'auth/invalid-email') {
+                    showMessage('auth-msg', "이메일 형식이 올바르지 않습니다.");
+                } else {
+                    showMessage('auth-msg', "신청 실패: " + error.code);
+                }
             }
         }
 
@@ -203,14 +215,16 @@
         window.handleLogin = async function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const msg = document.getElementById('auth-msg');
-            if(!email || !password) return alert("정보를 모두 입력해주세요.");
+            if(!email || !password) return showMessage('auth-msg', "정보를 모두 입력해주세요.");
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error("로그인 오류:", error);
-                msg.innerText = "이메일 또는 비밀번호가 올바르지 않습니다.";
+                if(error.code === 'auth/invalid-email') {
+                    showMessage('auth-msg', "이메일 형식이 올바르지 않습니다.");
+                } else {
+                    showMessage('auth-msg', "이메일 또는 비밀번호가 올바르지 않습니다.");
+                }
             }
         }
 
@@ -226,14 +240,16 @@
         // [저장]
         window.saveToFirebase = function() {
             const newText = document.getElementById('titleInput').value;
-            if(!newText) return alert("내용을 입력해주세요!");
+            const updateMsg = document.getElementById('update-msg');
+            
+            if(!newText) return showMessage('update-msg', "내용을 입력해주세요!");
 
             set(ref(db, 'siteData/'), {
                 mainTitle: newText
             }).then(() => {
-                alert("🎉 업데이트 완료! 메인 페이지를 확인해보세요.");
+                showMessage('update-msg', "🎉 업데이트 완료! 메인 페이지에 반영되었습니다.", false);
             }).catch((error) => {
-                alert("❌ 권한이 없거나 오류가 발생했습니다: " + error.message);
+                showMessage('update-msg', "❌ 권한이 없거나 오류가 발생했습니다.");
             });
         }
     </script>

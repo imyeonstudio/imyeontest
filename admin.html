@@ -2,7 +2,7 @@
 <html class="dark" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>IMYEON STUDIO | 관리자 센터</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -27,60 +27,105 @@
         body { 
             font-family: 'Pretendard', sans-serif;
             margin: 0;
-            background-color: #0a0a0a; /* 메인과 동일한 어두운 배경 */
+            background-color: #0a0a0a;
             color: white;
         }
-        /* 입력창 포커스 시 테두리 색상 커스텀 */
-        input:focus {
+        input:focus, textarea:focus {
             border-color: #fff !important;
-            ring-color: #fff !important;
+            outline: none !important;
+            ring: 1px solid #fff !important;
         }
+        /* 인증 레이어 스타일 */
+        #auth-overlay {
+            position: fixed; inset: 0; background: #0a0a0a; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body class="antialiased selection:bg-white selection:text-black">
 
-    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-6 border-b border-white/10 bg-imyeon-black/80 backdrop-blur-sm">
-        <div class="text-xl font-black tracking-widest uppercase text-white">IMYEON <span class="text-xs font-light text-gray-500">ADMIN</span></div>
-        <a href="index.html" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-bold">메인 바로가기 →</a>
-    </nav>
-
-    <main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-12">
-        <div class="bg-imyeon-dark w-full max-w-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
-            
-            <div class="mb-10 pb-6 border-b border-white/10">
-                <span class="font-bold tracking-[0.3em] uppercase text-xs text-gray-500 block mb-2">Alpha Testing Server</span>
-                <h1 class="text-3xl md:text-4xl font-black tracking-tighter leading-tight break-keep">
-                    메인 문구 수정
-                </h1>
-                <p class="text-gray-400 text-sm font-light leading-relaxed mt-4 break-keep">
-                    여기에 입력한 내용이 메인 페이지의 대형 타이틀에 실시간으로 반영됩니다. 
-                </p>
+    <div id="auth-overlay">
+        <div class="bg-imyeon-dark p-8 md:p-12 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl">
+            <div class="text-center mb-10">
+                <div class="text-xl font-black tracking-widest uppercase text-white mb-2">IMYEON <span class="text-xs font-light text-gray-500">ADMIN</span></div>
+                <p class="text-gray-400 text-xs tracking-widest uppercase">Access Restricted</p>
             </div>
-
-            <div class="space-y-6">
+            
+            <div class="space-y-4">
                 <div>
-                    <label for="titleInput" class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">새로운 제목 입력</label>
-                    <textarea id="titleInput" rows="4" 
-                        class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 focus:border-white focus:ring-1 focus:ring-white transition resize-none break-keep"
-                        placeholder="예: 디자인의 시작은 기획입니다"></textarea>
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Email Address</label>
+                    <input type="email" id="email" placeholder="이메일을 입력하세요" 
+                        class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 transition">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Password</label>
+                    <input type="password" id="password" placeholder="비밀번호를 입력하세요" 
+                        class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 transition">
+                </div>
+                
+                <div class="pt-4 space-y-3">
+                    <button id="loginBtn" onclick="handleLogin()" 
+                        class="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-gray-200 transition-colors">
+                        로그인
+                    </button>
+                    <button id="signupBtn" onclick="handleSignup()" 
+                        class="w-full border border-white/10 text-gray-400 py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-white/5 transition-colors">
+                        회원가입 신청
+                    </button>
+                </div>
+                <p id="auth-msg" class="mt-4 text-xs text-center text-red-500 font-medium h-4"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-content" class="hidden">
+        <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-16 py-6 border-b border-white/10 bg-imyeon-black/80 backdrop-blur-sm">
+            <div class="text-xl font-black tracking-widest uppercase text-white">IMYEON <span class="text-xs font-light text-gray-500">ADMIN</span></div>
+            <div class="flex items-center gap-6">
+                <button onclick="handleLogout()" class="text-[10px] text-gray-500 hover:text-white transition-colors uppercase tracking-widest font-bold">로그아웃</button>
+                <a href="index.html" class="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-bold">메인 바로가기 →</a>
+            </div>
+        </nav>
+
+        <main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-12">
+            <div class="bg-imyeon-dark w-full max-w-xl p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl">
+                
+                <div class="mb-10 pb-6 border-b border-white/10">
+                    <span class="font-bold tracking-[0.3em] uppercase text-[10px] text-gray-500 block mb-2">Internal Management</span>
+                    <h1 class="text-3xl md:text-4xl font-black tracking-tighter leading-tight break-keep">
+                        메인 문구 수정
+                    </h1>
+                    <p class="text-gray-400 text-sm font-light leading-relaxed mt-4 break-keep">
+                        입력한 내용이 홈페이지 메인 타이틀에 실시간으로 반영됩니다.
+                    </p>
                 </div>
 
-                <button onclick="saveToFirebase()" 
-                    class="w-full inline-block bg-white text-black text-center py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest font-bold text-sm shadow-lg">
-                    홈페이지 업데이트 적용
-                </button>
+                <div class="space-y-6">
+                    <div>
+                        <label for="titleInput" class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3 ml-1">New Main Title</label>
+                        <textarea id="titleInput" rows="4" 
+                            class="w-full p-4 bg-imyeon-black border border-white/10 rounded-xl text-white placeholder:text-gray-700 focus:border-white focus:ring-1 focus:ring-white transition resize-none break-keep"
+                            placeholder="예: 디자인의 시작은 기획입니다"></textarea>
+                    </div>
+
+                    <button onclick="saveToFirebase()" 
+                        class="w-full inline-block bg-white text-black text-center py-4 rounded-xl hover:bg-gray-200 transition-colors uppercase tracking-widest font-bold text-sm shadow-lg">
+                        홈페이지 업데이트 적용
+                    </button>
+                </div>
             </div>
+        </main>
 
-        </div>
-    </main>
-
-    <footer class="text-center p-6 text-xs text-gray-600 border-t border-white/10">
-        © 2026 Design Studio IMYEON. Admin Panel v1.0
-    </footer>
+        <footer class="text-center p-6 text-[10px] text-gray-600 border-t border-white/10 tracking-widest uppercase">
+            © 2026 Design Studio IMYEON. Secure Admin Panel
+        </footer>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAGAnKh-SIOflCLFI7fDzViON8k-0-RY_s",
@@ -94,8 +139,68 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getDatabase(app);
 
+        // [상태 감지] 로그인 여부 실시간 확인
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const snapshot = await get(ref(db, 'users/' + user.uid));
+                const userData = snapshot.val();
+                
+                if (userData && userData.approved === true) {
+                    document.getElementById('auth-overlay').classList.add('hidden');
+                    document.getElementById('admin-content').classList.remove('hidden');
+                } else {
+                    if (userData) alert("아직 승인되지 않은 회원입니다. 대표님께 문의하세요.");
+                    handleLogout();
+                }
+            } else {
+                document.getElementById('auth-overlay').classList.remove('hidden');
+                document.getElementById('admin-content').classList.add('hidden');
+            }
+        });
+
+        // [함수] 회원가입 신청
+        window.handleSignup = async function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if(!email || !password) return alert("정보를 모두 입력해주세요.");
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await set(ref(db, 'users/' + userCredential.user.uid), {
+                    email: email,
+                    approved: false,
+                    requestDate: new Date().toISOString()
+                });
+                alert("회원가입 신청 완료! 대표님의 승인 후 로그인이 가능합니다.");
+                handleLogout();
+            } catch (error) {
+                alert("신청 실패: " + error.message);
+            }
+        }
+
+        // [함수] 로그인 처리
+        window.handleLogin = async function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('auth-msg');
+            if(!email || !password) return alert("정보를 모두 입력해주세요.");
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                msg.innerText = "이메일 또는 비밀번호가 올바르지 않습니다.";
+            }
+        }
+
+        // [함수] 로그아웃
+        window.handleLogout = function() {
+            signOut(auth);
+        }
+
+        // [함수] 데이터 저장 (기존 기능)
         window.saveToFirebase = function() {
             const newText = document.getElementById('titleInput').value;
             if(!newText) return alert("내용을 입력해주세요!");
@@ -103,10 +208,9 @@
             set(ref(db, 'siteData/'), {
                 mainTitle: newText
             }).then(() => {
-                // 성공 알림창을 조금 더 고급스럽게 꾸밀 수도 있지만, 일단 기본 alert 유지
                 alert("🎉 업데이트 완료! 메인 페이지를 확인해보세요.");
             }).catch((error) => {
-                alert("❌ 오류 발생: " + error.message);
+                alert("❌ 권한이 없거나 오류가 발생했습니다: " + error.message);
             });
         }
     </script>
